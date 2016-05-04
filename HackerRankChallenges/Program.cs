@@ -11,30 +11,57 @@ namespace HackerRankChallenges
         //TODO test multiplication, addition and subtraction methods in a test library
         static void Main(String[] args)
         {
-            int n = Convert.ToInt32(Console.ReadLine());
-            if(n <= 20)
-            {
-                Console.WriteLine(CalculateFactorial(n));
-            }
-            else
-            {
-                Console.WriteLine(CalculateBigFactorial(n));
-            }
+           /* int n = Convert.ToInt32(Console.ReadLine());*/
+
+            //if (n <= 12)
+            //{
+            //    Console.WriteLine(CalculateFactorial(n));
+            //}
+            //else if(n <= 20)
+            //{
+            //    Console.WriteLine(CalculateLongFactorial(n));
+            //}
+            //else
+            //{
+            //    Console.WriteLine(CalculateBigFactorial(n));
+            //} 
+            CalculateBigFactorial(100);
+            Console.ReadKey();
+
         }
 
         static int CalculateFactorial(int n)
         {
+            int answer;
             if(n < 0)
             {
                 return -1;
             }
             else if(n == 0 || n == 1)
             {
-                return 1;
+                answer = 1;//return 1;
             }
             else
             {
-                return n * CalculateFactorial(n - 1);
+                answer = /*return*/ n * CalculateFactorial(n - 1);
+            }
+
+            Console.WriteLine("{0}!\t{1}", n, answer);
+            return answer;
+        }
+
+        static long CalculateLongFactorial(int n)
+        {
+            
+            if(n < 13)
+            {
+                return CalculateFactorial(n);
+            }
+            else
+            {
+                long answer = n * CalculateLongFactorial(n - 1);
+                Console.WriteLine("{0}!\t{1}", n, answer);
+                return answer;
             }
         }
 
@@ -44,13 +71,19 @@ namespace HackerRankChallenges
             {
                 throw new NotSupportedException("n must be between 1 and 100 inclusive.");
             }
-            else if( n <= 20)
+            else if(n <= 12)
             {
                 return new BigNumber(CalculateFactorial(n));
             }
+            else if( n <= 20)
+            {
+                return new BigNumber(CalculateLongFactorial(n));
+            }
             else
             {
-                return new BigNumber(n) * CalculateBigFactorial(n - 1);
+                BigNumber answer = new BigNumber(n) * CalculateBigFactorial(n - 1);
+                Console.WriteLine("{0}!\t{1}", n, answer);
+                return answer;
             }
 
         }
@@ -67,6 +100,25 @@ namespace HackerRankChallenges
             while(i > 0)
             {
                 number.Insert(0, i % 10);
+                i /= 10;
+            }
+
+            return number;
+        }
+
+        public static List<int> ToList(this long i)
+        {
+            List<int> number = new List<int>();
+            if (i == 0)
+            {
+                number.Insert(0, 0);
+                return number;
+            }
+
+            while (i > 0)
+            {
+                long remainder = i % 10;
+                number.Insert(0, (int) remainder);
                 i /= 10;
             }
 
@@ -118,6 +170,8 @@ namespace HackerRankChallenges
 
             public BigNumber(int n) : this (Math.Abs(n).ToList(), isNegative: n < 0)
             {}
+
+            public BigNumber(long n) : this(Math.Abs(n).ToList(), isNegative: n < 0) { }
 
             public override string ToString()
             {
@@ -306,7 +360,7 @@ namespace HackerRankChallenges
                             midprod.Insert(0, carry);
                         }
 
-                        product += new BigNumber(midprod);
+                        product += new BigNumber(midprod, a.IsNegative != b.IsNegative);
 
                     }
 
@@ -344,7 +398,7 @@ namespace HackerRankChallenges
 
             public override int GetHashCode()
             {
-                return base.GetHashCode();
+                return digits.GetHashCode() * negative.GetHashCode();
             }
 
             public int CompareTo(BigNumber other)
